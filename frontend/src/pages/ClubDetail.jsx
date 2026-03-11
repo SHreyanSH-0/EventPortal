@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { FiMail, FiPhone, FiGlobe, FiArrowLeft } from 'react-icons/fi';
+import { FiMail, FiPhone, FiGlobe, FiArrowLeft, FiSend, FiClock, FiCheckCircle, FiXCircle, FiX } from 'react-icons/fi';
 import api from '../utils/api';
 import EventCard from '../components/EventCard';
 import { useAuth } from '../context/AuthContext';
@@ -11,10 +11,15 @@ const ClubDetail = () => {
   const [club, setClub] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isMember, setIsMember] = useState(false);
+  const [joinRequest, setJoinRequest] = useState(null);
+  const [joinMessage, setJoinMessage] = useState('');
+  const [showJoinForm, setShowJoinForm] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     fetchClub();
-  }, [id]);
+    if (user) fetchMyRequest();
+  }, [id, user]);
 
   const fetchClub = async () => {
     try {
@@ -27,18 +32,41 @@ const ClubDetail = () => {
     finally { setLoading(false); }
   };
 
-  const handleJoin = async () => {
+  const fetchMyRequest = async () => {
     try {
-      await api.post(`/clubs/${id}/join`);
-      setIsMember(true);
-      fetchClub();
-    } catch (err) { alert(err.response?.data?.message); }
+      const { data } = await api.get(`/clubs/${id}/my-request`);
+      setJoinRequest(data);
+    } catch (err) { console.error(err); }
+  };
+
+  const handleRequestJoin = async () => {
+    setSubmitting(true);
+    try {
+      await api.post(`/clubs/${id}/join`, { message: joinMessage });
+      setShowJoinForm(false);
+      setJoinMessage('');
+      fetchMyRequest();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to send request');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleCancelRequest = async () => {
+    try {
+      await api.delete(`/clubs/${id}/requests`);
+      setJoinRequest(null);
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to cancel request');
+    }
   };
 
   const handleLeave = async () => {
     try {
       await api.delete(`/clubs/${id}/join`);
       setIsMember(false);
+      setJoinRequest(null);
       fetchClub();
     } catch (err) { console.error(err); }
   };
@@ -49,6 +77,84 @@ const ClubDetail = () => {
   const getCategoryGradient = (cat) => {
     const g = { technical: '#6366f1, #8b5cf6', cultural: '#ec4899, #f43f5e', sports: '#10b981, #14b8a6', literary: '#14b8a6, #06b6d4', social: '#3b82f6, #6366f1', other: '#6b7280, #9ca3af' };
     return g[cat] || g.other;
+  };
+
+  const renderJoinButton = () => {
+    if (!user) return null;
+    if (isMember) {
+      return <button className="btn btn-danger btn-sm" onClick={handleLeave}>Leave Club</button>;
+    }
+
+    // Check join request status
+    if (joinRequest) {
+      if (joinRequest.status === 'pending') {
+        return (
+          <div className="join-request-status">
+            <div className="request-status-badge pending">
+              <FiClock /> Request Pending
+            </div>
+            <button className="btn btn-secondary btn-sm" onClick={handleCancelRequest} title="Cancel Request">
+              <FiX /> Cancel
+            </button>
+          </div>
+        );
+      }
+      if (joinRequest.status === 'rejected') {
+        return (
+          <div className="join-request-status">
+            <div className="request-status-badge rejected">
+              <FiXCircle /> Request Declined
+            </div>
+            <button className="btn btn-primary btn-sm" onClick={() => { setJoinRequest(null); setShowJoinForm(true); }}>
+              <FiSend /> Re-apply
+            </button>
+          </div>
+        );
+      }
+    }
+
+    // Show join form or button
+    if (showJoinForm) {
+      return (
+        <div className="join-request-form">
+          <h4 style={{ fontFamily: 'Space Grotesk', marginBottom: '0.75rem', fontSize: '1rem' }}>
+            📝 Request to Join {club.name}
+          </h4>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+            Your request will be sent to the club admin for approval.
+          </p>
+          <div className="form-group" style={{ marginBottom: '1rem' }}>
+            <label className="form-label">Message (optional)</label>
+            <textarea
+              className="form-textarea"
+              placeholder="Tell the admin why you'd like to join this club..."
+              value={joinMessage}
+              onChange={(e) => setJoinMessage(e.target.value)}
+              rows={3}
+              maxLength={500}
+              style={{ resize: 'vertical' }}
+            />
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem', textAlign: 'right' }}>
+              {joinMessage.length}/500
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <button className="btn btn-primary btn-sm" onClick={handleRequestJoin} disabled={submitting}>
+              {submitting ? <><div className="spinner-sm"></div> Sending...</> : <><FiSend /> Send Request</>}
+            </button>
+            <button className="btn btn-secondary btn-sm" onClick={() => { setShowJoinForm(false); setJoinMessage(''); }}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <button className="btn btn-primary btn-sm" onClick={() => setShowJoinForm(true)}>
+        <FiSend /> Request to Join
+      </button>
+    );
   };
 
   return (
@@ -71,12 +177,8 @@ const ClubDetail = () => {
             <div><strong style={{ color: 'var(--primary)' }}>{club.eventsHosted}</strong> <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Events</span></div>
             <div><strong style={{ color: 'var(--primary)' }}>{club.members?.length || 0}</strong> <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Members</span></div>
           </div>
-          <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
-            {isMember ? (
-              <button className="btn btn-danger btn-sm" onClick={handleLeave}>Leave Club</button>
-            ) : user ? (
-              <button className="btn btn-primary btn-sm" onClick={handleJoin}>Join Club</button>
-            ) : null}
+          <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+            {renderJoinButton()}
           </div>
         </div>
       </div>

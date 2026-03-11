@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FiPlus, FiEdit, FiTrash2, FiUsers, FiEye } from 'react-icons/fi';
+import { FiPlus, FiEdit, FiTrash2, FiUsers, FiEye, FiUserPlus, FiCheck, FiX, FiClock, FiCheckCircle, FiXCircle } from 'react-icons/fi';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { formatDate } from '../utils/helpers';
@@ -16,6 +16,12 @@ const AdminPanel = () => {
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Join requests state
+  const [joinRequests, setJoinRequests] = useState([]);
+  const [requestFilter, setRequestFilter] = useState('pending');
+  const [requestsLoading, setRequestsLoading] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
+
   const [form, setForm] = useState({
     title: '', description: '', date: '', time: '', location: '',
     category: 'technical', club: '', tags: '', maxParticipants: 100,
@@ -27,6 +33,12 @@ const AdminPanel = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (tab === 'requests' && clubs.length > 0) {
+      fetchJoinRequests();
+    }
+  }, [tab, requestFilter, clubs]);
+
   const fetchData = async () => {
     try {
       const [eventsRes, clubsRes] = await Promise.all([
@@ -37,9 +49,53 @@ const AdminPanel = () => {
       setClubs(clubsRes.data);
       // Default club
       const userClub = clubsRes.data.find(c => c.admin?._id === user._id || c.admin === user._id);
-      if (userClub) setForm(f => ({ ...f, club: userClub._id }));
+      if (userClub) {
+        setForm(f => ({ ...f, club: userClub._id }));
+        // Fetch pending count
+        try {
+          const reqRes = await api.get(`/clubs/${userClub._id}/requests?status=pending`);
+          setPendingCount(reqRes.data.length);
+        } catch (err) { console.error(err); }
+      }
     } catch (err) { console.error(err); }
     finally { setLoading(false); }
+  };
+
+  const fetchJoinRequests = async () => {
+    setRequestsLoading(true);
+    try {
+      const userClub = clubs.find(c => c.admin?._id === user._id || c.admin === user._id);
+      if (!userClub) {
+        setJoinRequests([]);
+        return;
+      }
+      const { data } = await api.get(`/clubs/${userClub._id}/requests?status=${requestFilter}`);
+      setJoinRequests(data);
+      if (requestFilter === 'pending') {
+        setPendingCount(data.length);
+      }
+    } catch (err) { console.error(err); }
+    finally { setRequestsLoading(false); }
+  };
+
+  const handleApprove = async (clubId, requestId) => {
+    try {
+      await api.put(`/clubs/${clubId}/requests/${requestId}/approve`);
+      fetchJoinRequests();
+      fetchData();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to approve');
+    }
+  };
+
+  const handleReject = async (clubId, requestId) => {
+    if (!window.confirm('Are you sure you want to reject this request?')) return;
+    try {
+      await api.put(`/clubs/${clubId}/requests/${requestId}/reject`);
+      fetchJoinRequests();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to reject');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -119,7 +175,7 @@ const AdminPanel = () => {
       <div className="section-header">
         <div>
           <h2 className="section-title">⚙️ Admin Panel</h2>
-          <p className="section-subtitle">Manage your club events</p>
+          <p className="section-subtitle">Manage your club events & membership</p>
         </div>
         <button className="btn btn-primary" onClick={() => { resetForm(); setEditingEvent(null); setShowForm(true); }}>
           <FiPlus /> Create Event
@@ -130,6 +186,12 @@ const AdminPanel = () => {
       <div className="admin-tabs">
         <button className={`admin-tab ${tab === 'events' ? 'active' : ''}`} onClick={() => setTab('events')}>My Events</button>
         <button className={`admin-tab ${tab === 'registrations' ? 'active' : ''}`} onClick={() => setTab('registrations')}>Registrations</button>
+        <button className={`admin-tab ${tab === 'requests' ? 'active' : ''}`} onClick={() => setTab('requests')} style={{ position: 'relative' }}>
+          <FiUserPlus style={{ marginRight: '0.3rem' }} /> Join Requests
+          {pendingCount > 0 && (
+            <span className="notification-badge">{pendingCount}</span>
+          )}
+        </button>
       </div>
 
       {/* Create/Edit Form */}
@@ -299,6 +361,124 @@ const AdminPanel = () => {
             <div className="empty-state">
               <div className="empty-state-icon">👀</div>
               <h3>No registrations yet</h3>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Join Requests Tab */}
+      {tab === 'requests' && (
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+            <h3 style={{ fontFamily: 'Space Grotesk' }}>
+              <FiUserPlus style={{ marginRight: '0.5rem' }} />
+              Club Join Requests
+            </h3>
+            <div className="request-filter-tabs">
+              {['pending', 'approved', 'rejected'].map(status => (
+                <button
+                  key={status}
+                  className={`request-filter-btn ${requestFilter === status ? 'active' : ''}`}
+                  onClick={() => setRequestFilter(status)}
+                >
+                  {status === 'pending' && <FiClock />}
+                  {status === 'approved' && <FiCheckCircle />}
+                  {status === 'rejected' && <FiXCircle />}
+                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {requestsLoading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}><div className="spinner"></div></div>
+          ) : joinRequests.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-state-icon">
+                {requestFilter === 'pending' ? '📋' : requestFilter === 'approved' ? '✅' : '❌'}
+              </div>
+              <h3>No {requestFilter} requests</h3>
+              <p>
+                {requestFilter === 'pending'
+                  ? "You're all caught up! No pending requests to review."
+                  : `No ${requestFilter} requests to show.`}
+              </p>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {joinRequests.map(request => (
+                <div className="card join-request-card" key={request._id}>
+                  <div className="join-request-card-content">
+                    <div className="join-request-user-info">
+                      <div className="registered-avatar" style={{ width: '48px', height: '48px', fontSize: '1.1rem' }}>
+                        {request.user?.name?.charAt(0)}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 700, fontSize: '1rem', fontFamily: 'Space Grotesk' }}>
+                          {request.user?.name}
+                        </div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
+                          {request.user?.email}
+                        </div>
+                        <div style={{ display: 'flex', gap: '1rem', marginTop: '0.4rem', flexWrap: 'wrap' }}>
+                          {request.user?.department && (
+                            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                              🏛️ {request.user.department}
+                            </span>
+                          )}
+                          {request.user?.yearOfStudy && (
+                            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                              📚 Year {request.user.yearOfStudy}
+                            </span>
+                          )}
+                        </div>
+                        {request.user?.skills?.length > 0 && (
+                          <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
+                            {request.user.skills.slice(0, 5).map((skill, i) => (
+                              <span key={i} className="tag" style={{ fontSize: '0.7rem', padding: '0.15rem 0.5rem' }}>{skill}</span>
+                            ))}
+                          </div>
+                        )}
+                        {request.message && (
+                          <div className="join-request-message">
+                            <strong>Message:</strong> "{request.message}"
+                          </div>
+                        )}
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                          Requested {new Date(request.createdAt).toLocaleDateString('en-IN', {
+                            day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="join-request-actions">
+                      {request.status === 'pending' ? (
+                        <>
+                          <button
+                            className="btn btn-primary btn-sm"
+                            onClick={() => handleApprove(request.club, request._id)}
+                            title="Approve"
+                          >
+                            <FiCheck /> Approve
+                          </button>
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() => handleReject(request.club, request._id)}
+                            title="Reject"
+                          >
+                            <FiX /> Reject
+                          </button>
+                        </>
+                      ) : (
+                        <div className={`request-status-badge ${request.status}`}>
+                          {request.status === 'approved' ? <FiCheckCircle /> : <FiXCircle />}
+                          {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
