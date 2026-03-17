@@ -2,6 +2,8 @@ const nodemailer = require('nodemailer');
 
 const sendEmail = async ({ to, subject, html }) => {
   const port = Number(process.env.EMAIL_PORT) || 587;
+  console.log(`[SMTP INFO] Attempting connection to ${process.env.EMAIL_HOST} on port ${port}...`);
+  
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: port,
