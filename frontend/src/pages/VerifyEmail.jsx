@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 
 const VerifyEmail = () => {
   const { token } = useParams();
@@ -11,7 +11,7 @@ const VerifyEmail = () => {
   useEffect(() => {
     const verify = async () => {
       try {
-        const { data } = await axios.post('http://localhost:5000/api/auth/verify', { token });
+        const { data } = await api.post('/auth/verify', { token });
         setMessage(data.message);
         setStatus('success');
         setTimeout(() => navigate('/login'), 3000);

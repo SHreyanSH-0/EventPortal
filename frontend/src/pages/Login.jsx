@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import api from '../utils/api';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -38,7 +38,7 @@ const Login = () => {
     setResendLoading(true);
     setResendMsg('');
     try {
-      const { data } = await axios.post('http://localhost:5000/api/auth/resend', { email });
+      const { data } = await api.post('/auth/resend', { email });
       setResendMsg(data.message);
     } catch (err) {
       setResendMsg(err.response?.data?.message || 'Failed to resend email');

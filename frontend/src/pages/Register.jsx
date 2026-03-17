@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -27,7 +27,7 @@ const Register = () => {
     }
     setLoading(true);
     try {
-      await axios.post('http://localhost:5000/api/auth/register', formData);
+      await api.post('/auth/register', formData);
       setEmailSent(true);
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');
@@ -40,7 +40,7 @@ const Register = () => {
     setResendLoading(true);
     setResendMsg('');
     try {
-      const { data } = await axios.post('http://localhost:5000/api/auth/resend', { email: formData.email });
+      const { data } = await api.post('/auth/resend', { email: formData.email });
       setResendMsg(data.message);
     } catch (err) {
       setResendMsg(err.response?.data?.message || 'Failed to resend email');

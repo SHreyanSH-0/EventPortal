@@ -33,7 +33,7 @@ const register = async (req, res) => {
       verificationTokenExpires: new Date(Date.now() + 60 * 60 * 1000)
     });
 
-    const verifyUrl = `http://localhost:5173/verify/${rawToken}`;
+    const verifyUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/verify/${rawToken}`;
 
     try {
       await sendEmail({
@@ -142,7 +142,7 @@ const resendVerification = async (req, res) => {
     user.verificationTokenExpires = new Date(Date.now() + 60 * 60 * 1000);
     await user.save();
 
-    const verifyUrl = `http://localhost:5173/verify/${rawToken}`;
+    const verifyUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/verify/${rawToken}`;
 
     await sendEmail({
       to: user.email,
