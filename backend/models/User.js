@@ -72,6 +72,16 @@ const userSchema = new mongoose.Schema({
   managedClub: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Club'
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
+  },
+  verificationToken: {
+    type: String
+  },
+  verificationTokenExpires: {
+    type: Date
   }
 }, {
   timestamps: true

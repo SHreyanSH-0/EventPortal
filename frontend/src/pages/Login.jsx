@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
@@ -7,20 +8,42 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [notVerified, setNotVerified] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendMsg, setResendMsg] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setNotVerified(false);
+    setResendMsg('');
     setLoading(true);
     try {
       await login(email, password);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      if (err.response?.status === 403) {
+        setNotVerified(true);
+      } else {
+        setError(err.response?.data?.message || 'Login failed');
+      }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    setResendLoading(true);
+    setResendMsg('');
+    try {
+      const { data } = await axios.post('http://localhost:5000/api/auth/resend', { email });
+      setResendMsg(data.message);
+    } catch (err) {
+      setResendMsg(err.response?.data?.message || 'Failed to resend email');
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -37,6 +60,30 @@ const Login = () => {
         {error && (
           <div style={{ padding: '0.75rem', borderRadius: '10px', background: 'rgba(239,68,68,0.1)', color: 'var(--danger)', fontSize: '0.85rem', marginBottom: '1rem', textAlign: 'center' }}>
             {error}
+          </div>
+        )}
+
+        {notVerified && (
+          <div style={{ padding: '1rem', borderRadius: '10px', background: 'rgba(234,179,8,0.1)', border: '1px solid rgba(234,179,8,0.3)', marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+              <span style={{ fontSize: '1.2rem' }}>📧</span>
+              <strong style={{ color: 'var(--warning, #ca8a04)', fontSize: '0.9rem' }}>Email not verified</strong>
+            </div>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: '0 0 0.75rem 0' }}>
+              Please verify <strong>{email}</strong> before logging in.
+            </p>
+            {resendMsg ? (
+              <p style={{ fontSize: '0.82rem', color: 'var(--primary)', margin: 0 }}>{resendMsg}</p>
+            ) : (
+              <button
+                className="btn btn-primary"
+                style={{ width: '100%', padding: '0.5rem', fontSize: '0.85rem' }}
+                onClick={handleResend}
+                disabled={resendLoading}
+              >
+                {resendLoading ? 'Sending...' : 'Resend verification email'}
+              </button>
+            )}
           </div>
         )}
 

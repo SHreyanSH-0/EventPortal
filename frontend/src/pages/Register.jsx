@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -8,8 +8,9 @@ const Register = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { register } = useAuth();
-  const navigate = useNavigate();
+  const [emailSent, setEmailSent] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendMsg, setResendMsg] = useState('');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,14 +27,58 @@ const Register = () => {
     }
     setLoading(true);
     try {
-      await register(formData);
-      navigate('/dashboard');
+      await axios.post('http://localhost:5000/api/auth/register', formData);
+      setEmailSent(true);
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
   };
+
+  const handleResend = async () => {
+    setResendLoading(true);
+    setResendMsg('');
+    try {
+      const { data } = await axios.post('http://localhost:5000/api/auth/resend', { email: formData.email });
+      setResendMsg(data.message);
+    } catch (err) {
+      setResendMsg(err.response?.data?.message || 'Failed to resend email');
+    } finally {
+      setResendLoading(false);
+    }
+  };
+
+  if (emailSent) {
+    return (
+      <div className="auth-page">
+        <div className="hero-bg"></div>
+        <div className="auth-card glass" style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>📧</div>
+          <h2>Check your email!</h2>
+          <p className="auth-subtitle">
+            We sent a verification link to <strong>{formData.email}</strong>. Click the link in the email to activate your account.
+          </p>
+          {resendMsg && (
+            <div style={{ marginTop: '1rem', padding: '0.75rem', borderRadius: '10px', background: 'rgba(99,102,241,0.1)', color: 'var(--primary)', fontSize: '0.85rem' }}>
+              {resendMsg}
+            </div>
+          )}
+          <button
+            className="btn btn-primary"
+            style={{ marginTop: '1.5rem', width: '100%' }}
+            onClick={handleResend}
+            disabled={resendLoading}
+          >
+            {resendLoading ? 'Sending...' : 'Resend verification email'}
+          </button>
+          <div className="auth-footer" style={{ marginTop: '1rem' }}>
+            <Link to="/login">Back to Login</Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="auth-page">

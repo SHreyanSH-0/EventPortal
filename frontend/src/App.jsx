@@ -15,6 +15,7 @@ import CampusMap from './pages/CampusMap';
 import CalendarView from './pages/CalendarView';
 import AdminPanel from './pages/AdminPanel';
 import CreateClub from './pages/CreateClub';
+import VerifyEmail from './pages/VerifyEmail';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -49,6 +50,7 @@ function App() {
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/create-club" element={<ProtectedRoute><CreateClub /></ProtectedRoute>} />
             <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
+            <Route path="/verify/:token" element={<VerifyEmail />} />
           </Routes>
         </Router>
       </AuthProvider>
