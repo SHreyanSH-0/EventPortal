@@ -159,7 +159,8 @@ const resendVerification = async (req, res) => {
 
     res.json({ message: 'Verification email resent. Please check your inbox.' });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('RESEND EMAIL ERROR:', error);
+    res.status(500).json({ message: error.message || 'Failed to resend email' });
   }
 };
 
