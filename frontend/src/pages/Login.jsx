@@ -100,16 +100,6 @@ const Login = () => {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-
-        <div className="auth-divider">
-          <span>Demo Credentials</span>
-        </div>
-        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.8 }}>
-          Admin: admin@nitkkr.ac.in / admin123<br />
-          Club Admin: rahul@nitkkr.ac.in / student123<br />
-          Student: aarav@nitkkr.ac.in / student123
-        </div>
-
         <div className="auth-footer">
           Don't have an account? <Link to="/register">Sign up</Link>
         </div>

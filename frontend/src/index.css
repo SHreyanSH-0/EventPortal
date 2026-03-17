@@ -1632,3 +1632,229 @@ input, textarea, select { font-family: inherit; }
   .hero-stat-value { font-size: 1.5rem; }
   .dashboard-grid { grid-template-columns: 1fr; }
 }
+
+/* =================== JOIN REQUEST SYSTEM =================== */
+
+/* Join Request Form (on ClubDetail page) */
+.join-request-form {
+  background: var(--gradient-card);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-top: 0.5rem;
+  width: 100%;
+  max-width: 480px;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.join-request-form .form-textarea {
+  min-height: 80px;
+  background: var(--bg-input);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.join-request-form .form-textarea:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+/* Join Request Status Display */
+.join-request-status {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* Status Badges */
+.request-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 1rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.request-status-badge.pending {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+  border: 1.5px solid rgba(245, 158, 11, 0.25);
+  animation: pendingPulse 2s infinite ease-in-out;
+}
+
+@keyframes pendingPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.15); }
+  50% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+}
+
+.request-status-badge.approved {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border: 1.5px solid rgba(16, 185, 129, 0.25);
+}
+
+.request-status-badge.rejected {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border: 1.5px solid rgba(239, 68, 68, 0.25);
+}
+
+/* Join Request Cards (Admin Panel) */
+.join-request-card {
+  padding: 1.5rem !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.join-request-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.join-request-card-content {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.join-request-user-info {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.join-request-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+.join-request-message {
+  margin-top: 0.6rem;
+  padding: 0.6rem 0.9rem;
+  background: var(--bg-hover);
+  border-radius: 10px;
+  border-left: 3px solid var(--primary);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* Request Filter Tabs (Admin Panel) */
+.request-filter-tabs {
+  display: flex;
+  gap: 0.4rem;
+  background: var(--bg-input);
+  padding: 0.3rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.request-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 9px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.request-filter-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.request-filter-btn.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+/* Notification Badge (pending count) */
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: #ef4444;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
+  animation: badgePop 0.4s ease;
+}
+
+@keyframes badgePop {
+  from { transform: scale(0); }
+  50% { transform: scale(1.2); }
+  to { transform: scale(1); }
+}
+
+/* Small Spinner */
+.spinner-sm {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments for join requests */
+@media (max-width: 768px) {
+  .join-request-card-content {
+    flex-direction: column;
+  }
+
+  .join-request-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .request-filter-tabs {
+    flex-wrap: wrap;
+  }
+
+  .join-request-form {
+    max-width: 100%;
+  }
+}
+
