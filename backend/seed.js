@@ -25,7 +25,8 @@ const seedDB = async () => {
       department: 'Computer Engineering',
       yearOfStudy: 4,
       interests: ['AI', 'Coding', 'Hackathon', 'Techspardha'],
-      skills: ['JavaScript', 'Python', 'React']
+      skills: ['JavaScript', 'Python', 'React'],
+      isVerified: true,
     });
 
     // Create student users
@@ -37,7 +38,8 @@ const seedDB = async () => {
       department: 'Computer Engineering',
       yearOfStudy: 2,
       interests: ['AI', 'Machine Learning', 'Coding'],
-      skills: ['Python', 'TensorFlow']
+      skills: ['Python', 'TensorFlow'],
+      isVerified: true,
     });
 
     const student2 = await User.create({
@@ -48,7 +50,8 @@ const seedDB = async () => {
       department: 'Electronics & Communication',
       yearOfStudy: 3,
       interests: ['Robotics', 'IoT', 'Workshop'],
-      skills: ['Arduino', 'C++']
+      skills: ['Arduino', 'C++'],
+      isVerified: true,
     });
 
     // Create club admins
@@ -59,7 +62,8 @@ const seedDB = async () => {
       role: 'clubAdmin',
       department: 'Computer Engineering',
       yearOfStudy: 3,
-      interests: ['Coding', 'Hackathon', 'AI']
+      interests: ['Coding', 'Hackathon', 'AI'],
+      isVerified: true,
     });
 
     const clubAdmin2 = await User.create({
@@ -69,12 +73,13 @@ const seedDB = async () => {
       role: 'clubAdmin',
       department: 'Humanities & Social Sciences',
       yearOfStudy: 2,
-      interests: ['Dance', 'Music', 'Drama']
+      interests: ['Dance', 'Music', 'Drama'],
+      isVerified: true,
     });
 
     // Create NIT KKR clubs
     const techClub = await Club.create({
-      name: 'GLUG NIT KKR',
+      name: 'TechnoByte',
       description: 'GNU/Linux Users Group of NIT Kurukshetra. Promoting open-source culture, competitive programming, and innovative tech projects across campus.',
       category: 'technical',
       admin: clubAdmin1._id,

@@ -88,24 +88,7 @@ const Home = () => {
             </div>
           </div>
 
-          <div className="hero-visual">
-            <div className="hero-cards-stack">
-              {trendingEvents.slice(0, 3).map((event, i) => (
-                <div key={event._id} className="hero-floating-card glass" style={{ zIndex: 3 - i }}>
-                  <div className="event-card-club">{event.club?.name}</div>
-                  <h4 style={{ fontFamily: 'Space Grotesk', fontWeight: 700, marginBottom: '0.3rem' }}>{event.title}</h4>
-                  <div className="event-card-meta-item" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                    📅 {new Date(event.date).toLocaleDateString()} · {event.time}
-                  </div>
-                  <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.3rem' }}>
-                    {event.tags?.slice(0, 2).map((tag, j) => (
-                      <span className="tag" key={j}>{tag}</span>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+
         </div>
       </section>
 
