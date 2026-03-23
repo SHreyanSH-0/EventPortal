@@ -38,11 +38,11 @@ const register = async (req, res) => {
     try {
       await sendEmail({
         to: user.email,
-        subject: 'Verify your NIT-KKR Connect account',
+        subject: 'Verify your CampusX account',
         html: `
           <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:32px;border-radius:12px;border:1px solid #e5e7eb">
             <h2 style="color:#4f46e5">Welcome, ${user.name}! 🎓</h2>
-            <p>Thanks for signing up to <strong>NIT-KKR Connect</strong>. Please verify your email address by clicking the button below.</p>
+            <p>Thanks for signing up to <strong>CampusX</strong>. Please verify your email address by clicking the button below.</p>
             <a href="${verifyUrl}" style="display:inline-block;margin-top:16px;padding:12px 28px;background:#4f46e5;color:#fff;border-radius:8px;text-decoration:none;font-weight:600">Verify Email</a>
             <p style="margin-top:24px;color:#6b7280;font-size:0.875rem">This link expires in <strong>1 hour</strong>. If you did not create this account, you can safely ignore this email.</p>
           </div>
@@ -146,11 +146,11 @@ const resendVerification = async (req, res) => {
 
     await sendEmail({
       to: user.email,
-      subject: 'Resend: Verify your NIT-KKR Connect account',
+      subject: 'Resend: Verify your CampusX account',
       html: `
         <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:32px;border-radius:12px;border:1px solid #e5e7eb">
           <h2 style="color:#4f46e5">Verify your email 🔗</h2>
-          <p>Here is your new verification link for <strong>NIT-KKR Connect</strong>.</p>
+          <p>Here is your new verification link for <strong>CampusX</strong>.</p>
           <a href="${verifyUrl}" style="display:inline-block;margin-top:16px;padding:12px 28px;background:#4f46e5;color:#fff;border-radius:8px;text-decoration:none;font-weight:600">Verify Email</a>
           <p style="margin-top:24px;color:#6b7280;font-size:0.875rem">This link expires in <strong>1 hour</strong>.</p>
         </div>

@@ -1,19 +1,23 @@
 const express = require('express');
 const router = express.Router();
 const {
-  createClub, getClubs, getClub, updateClub,
+  createClub, getClubs, getPendingClubs, approveClub, rejectClub, getClub, updateClub,
   joinClub, leaveClub, getLeaderboard,
   getJoinRequests, approveJoinRequest, rejectJoinRequest,
-  cancelJoinRequest, getMyJoinRequest
+  cancelJoinRequest, getMyJoinRequest, getMyPendingClubs
 } = require('../controllers/clubController');
-const { protect, clubAdmin } = require('../middleware/auth');
+const { protect, clubAdmin, admin } = require('../middleware/auth');
 
 router.get('/leaderboard', getLeaderboard);
+router.get('/pending', protect, admin, getPendingClubs);
+router.get('/my-pending', protect, getMyPendingClubs);
 router.get('/', getClubs);
 router.get('/:id', getClub);
 
 router.post('/', protect, createClub);
 router.put('/:id', protect, clubAdmin, updateClub);
+router.put('/:id/approve', protect, admin, approveClub);
+router.put('/:id/reject', protect, admin, rejectClub);
 
 // Join/Leave
 router.post('/:id/join', protect, joinClub);

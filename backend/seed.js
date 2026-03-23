@@ -78,73 +78,206 @@ const seedDB = async () => {
     });
 
     // Create NIT KKR clubs
-    const techClub = await Club.create({
-      name: 'TechnoByte',
-      description: 'GNU/Linux Users Group of NIT Kurukshetra. Promoting open-source culture, competitive programming, and innovative tech projects across campus.',
-      category: 'technical',
-      admin: clubAdmin1._id,
-      members: [clubAdmin1._id, student1._id, admin._id],
-      contactEmail: 'glug@nitkkr.ac.in',
-      socialLinks: { github: 'https://github.com/glugnitkkr', instagram: 'https://instagram.com/glug_nitkkr' },
-      eventsHosted: 8
-    });
+    const allClubs = [
+      await Club.create({
+        name: 'MAD',
+        description: 'Management club of NIT Kurukshetra. Every event you see in campus is managed by us.',
+        category: 'management',
+        admin: clubAdmin1._id,
+        members: [clubAdmin1._id, student1._id, admin._id],
+        contactEmail: 'glug@nitkkr.ac.in',
+        socialLinks: { github: 'https://github.com/glugnitkkr', instagram: 'https://instagram.com/glug_nitkkr' },
+        eventsHosted: 8
+      }),
 
-    const culturalClub = await Club.create({
-      name: 'Rhythm & Blues NIT KKR',
-      description: 'The cultural heartbeat of NIT Kurukshetra. From classical performances to contemporary fusion, we celebrate art in every form at Confluence.',
-      category: 'cultural',
-      admin: clubAdmin2._id,
-      members: [clubAdmin2._id, student2._id],
-      contactEmail: 'culturals@nitkkr.ac.in',
-      socialLinks: { instagram: 'https://instagram.com/confluence_nitkkr' },
-      eventsHosted: 5
-    });
+      await Club.create({
+        name: 'TechnoByte',
+        description: 'Technical club of NIT Kurukshetra. Organises Techspardha - Techfest of NIT KKR.',
+        category: 'technical',
+        admin: clubAdmin1._id,
+        members: [clubAdmin1._id, student1._id, admin._id],
+        contactEmail: 'glug@nitkkr.ac.in',
+        socialLinks: { github: 'https://github.com/glugnitkkr', instagram: 'https://instagram.com/glug_nitkkr' },
+        eventsHosted: 8
+      }),
 
-    const sportsClub = await Club.create({
-      name: 'Sports Council NIT KKR',
-      description: 'Organizing inter-NIT tournaments, Sportotsav, fitness drives, and all sporting events at NIT Kurukshetra. Play hard, win harder!',
-      category: 'sports',
-      admin: admin._id,
-      members: [admin._id, student1._id, student2._id],
-      contactEmail: 'sports@nitkkr.ac.in',
-      eventsHosted: 6
-    });
+      await Club.create({
+        name: 'OCD',
+        description: 'Coding club of NIT Kurukshetra. Promoting competitive programming, and awareness for ICPC across campus.',
+        category: 'technical',
+        admin: clubAdmin1._id,
+        members: [clubAdmin1._id, student1._id, admin._id],
+        contactEmail: 'glug@nitkkr.ac.in',
+        socialLinks: { github: 'https://github.com/glugnitkkr', instagram: 'https://instagram.com/glug_nitkkr' },
+        eventsHosted: 8
+      }),
 
-    const roboticsClub = await Club.create({
-      name: 'Robotics Club NIT KKR',
-      description: 'Building autonomous robots, drones, and embedded systems. Regular workshops on ROS, Arduino, and competing at national robotics competitions.',
-      category: 'technical',
-      admin: clubAdmin1._id,
-      members: [clubAdmin1._id, student2._id],
-      contactEmail: 'robotics@nitkkr.ac.in',
-      socialLinks: { github: 'https://github.com/robotics-nitkkr' },
-      eventsHosted: 4
-    });
+      await Club.create({
+        name: 'Spic Mcc',
+        description: 'A cultural society at NIT Kurukshetra dedicated to promoting Indian classical music, dance, and heritage through enriching performances and workshops.',
+        category: 'fine arts and culture',
+        admin: clubAdmin2._id,
+        members: [clubAdmin2._id, student2._id],
+        contactEmail: 'culturals@nitkkr.ac.in',
+        socialLinks: { instagram: 'https://instagram.com/confluence_nitkkr' },
+        eventsHosted: 5
+      }),
 
-    const literaryClub = await Club.create({
-      name: 'The Literary Society NIT KKR',
-      description: 'Poetry slams, open mics, debates, MUNs, and creative writing workshops. Express yourself through words at NIT Kurukshetra.',
-      category: 'literary',
-      admin: admin._id,
-      members: [admin._id],
-      contactEmail: 'literary@nitkkr.ac.in',
-      eventsHosted: 3
-    });
+      await Club.create({
+        name: 'Anamika',
+        description: 'The Hindi Literature Society of NIT Kurukshetra that encourages creative expression through poetry, storytelling, debates, and literary discussions in Hindi.',
+        category: 'fine arts and culture',
+        admin: clubAdmin2._id,
+        members: [clubAdmin2._id, student2._id],
+        contactEmail: 'literary@nitkkr.ac.in',
+        eventsHosted: 4
+      }),
 
-    const ecellClub = await Club.create({
-      name: 'E-Cell NIT KKR',
-      description: 'The Entrepreneurship Cell of NIT Kurukshetra. Startup mentorship, pitch competitions, speaker sessions, and building the next generation of entrepreneurs.',
-      category: 'technical',
-      admin: clubAdmin1._id,
-      members: [clubAdmin1._id, student1._id],
-      contactEmail: 'ecell@nitkkr.ac.in',
-      socialLinks: { instagram: 'https://instagram.com/ecell_nitkkr', linkedin: 'https://linkedin.com/company/ecell-nitkkr' },
-      eventsHosted: 5
-    });
+      await Club.create({
+        name: 'Fine Arts & Modelling Club',
+        description: 'An arts-focused club at NIT Kurukshetra that promotes creativity through sketching, painting, crafting, and modelling, providing a platform for artistic expression.',
+        category: 'fine arts and culture',
+        admin: clubAdmin2._id,
+        members: [clubAdmin2._id, student2._id],
+        contactEmail: 'arts@nitkkr.ac.in',
+        eventsHosted: 4
+      }),
+
+      await Club.create({
+        name: 'LSD',
+        description: 'The dance crew of NIT Kurukshetra.',
+        category: 'Dance_Crew',
+        admin: clubAdmin2._id,
+        members: [clubAdmin2._id, student2._id],
+        contactEmail: 'culturals@nitkkr.ac.in',
+        socialLinks: { instagram: 'https://instagram.com/confluence_nitkkr' },
+        eventsHosted: 5
+      }),
+
+      await Club.create({
+        name: 'SUC',
+        description: 'They call it dance, we call it life.',
+        category: 'Dance_Crew',
+        admin: clubAdmin2._id,
+        members: [clubAdmin2._id, student2._id],
+        contactEmail: 'culturals@nitkkr.ac.in',
+        socialLinks: { instagram: 'https://instagram.com/confluence_nitkkr' },
+        eventsHosted: 5
+      }),
+
+      await Club.create({
+        name: 'NBC',
+        description: 'The cultural heartbeat of NIT Kurukshetra. From classical performances to contemporary fusion, we celebrate art in every form at Confluence.',
+        category: 'Dance_Crew',
+        admin: clubAdmin2._id,
+        members: [clubAdmin2._id, student2._id],
+        contactEmail: 'culturals@nitkkr.ac.in',
+        socialLinks: { instagram: 'https://instagram.com/confluence_nitkkr' },
+        eventsHosted: 5
+      }),
+
+      await Club.create({
+        name: 'Freaks',
+        description: 'The dramatics and theatre club of NIT Kurukshetra, focusing on stage plays, street theatre, and creative performances. It nurtures acting, direction, and storytelling skills through impactful productions.',
+        category: 'dramatics',
+        admin: clubAdmin2._id,
+        members: [clubAdmin2._id, student2._id],
+        contactEmail: 'culturals@nitkkr.ac.in',
+        socialLinks: { instagram: 'https://instagram.com/confluence_nitkkr' },
+        eventsHosted: 5
+      }),
+
+      await Club.create({
+        name: 'Ahwaan',
+        description: 'A theatre and dramatics society at NIT Kurukshetra known for powerful stage performances, street plays, and socially relevant storytelling. It provides a platform for students to explore acting and creative expression.',
+        category: 'dramatics',
+        admin: clubAdmin2._id,
+        members: [clubAdmin2._id, student2._id],
+        contactEmail: 'culturals@nitkkr.ac.in',
+        socialLinks: { instagram: 'https://instagram.com/confluence_nitkkr' },
+        eventsHosted: 5
+      }),
+
+      await Club.create({
+        name: 'Swingers',
+        description: 'A vibrant dramatics club of NIT Kurukshetra that brings stories to life through theatre, street plays, and stage performances. It encourages creativity, teamwork, and expressive storytelling.',
+        category: 'dramatics',
+        admin: clubAdmin2._id,
+        members: [clubAdmin2._id, student2._id],
+        contactEmail: 'culturals@nitkkr.ac.in',
+        socialLinks: { instagram: 'https://instagram.com/confluence_nitkkr' },
+        eventsHosted: 5
+      }),
+
+      await Club.create({
+        name: 'EMR',
+        description: 'Building autonomous robots, drones, and embedded systems. Regular workshops on ROS, Arduino, and competing at national robotics competitions.',
+        category: 'technical',
+        admin: clubAdmin1._id,
+        members: [clubAdmin1._id, student2._id],
+        contactEmail: 'robotics@nitkkr.ac.in',
+        socialLinks: { github: 'https://github.com/robotics-nitkkr' },
+        eventsHosted: 4
+      }),
+
+      await Club.create({
+        name: 'ELAD',
+        description: 'Poetry slams, open mics, debates, MUNs, and creative writing workshops. Express yourself through words at NIT Kurukshetra.',
+        category: 'literary',
+        admin: admin._id,
+        members: [admin._id],
+        contactEmail: 'literary@nitkkr.ac.in',
+        eventsHosted: 3
+      }),
+
+      await Club.create({
+        name: 'HLAD',
+        description: 'Hindi Club of NIT Kurukshetra that promotes Hindi language and literature through poetry, debates, storytelling, dramatics, and cultural events. It provides a platform for students to express themselves and celebrate Indian linguistic heritage.',
+        category: 'literary',
+        admin: admin._id,
+        members: [admin._id],
+        contactEmail: 'literary@nitkkr.ac.in',
+        eventsHosted: 3
+      }),
+
+      await Club.create({
+        name: 'E-Cell',
+        description: 'The Entrepreneurship Cell of NIT Kurukshetra. Startup mentorship, pitch competitions, speaker sessions, and building the next generation of entrepreneurs.',
+        category: 'technical',
+        admin: clubAdmin1._id,
+        members: [clubAdmin1._id, student1._id],
+        contactEmail: 'ecell@nitkkr.ac.in',
+        socialLinks: { instagram: 'https://instagram.com/ecell_nitkkr', linkedin: 'https://linkedin.com/company/ecell-nitkkr' },
+        eventsHosted: 5
+      }),
+
+      await Club.create({
+        name: 'I-Cell',
+        description: 'The Innovation Cell of NIT Kurukshetra. Startup mentorship, pitch competitions, speaker sessions, and building the next generation of entrepreneurs.',
+        category: 'technical',
+        admin: clubAdmin1._id,
+        members: [clubAdmin1._id, student1._id],
+        contactEmail: 'icell@nitkkr.ac.in',
+        socialLinks: { instagram: 'https://instagram.com/icell_nitkkr', linkedin: 'https://linkedin.com/company/ecell-nitkkr' },
+        eventsHosted: 5
+      }),
+    ];
+
+    // Approve all seeded clubs
+    await Club.updateMany({}, { status: 'approved' });
 
     // Update club admins
-    await User.findByIdAndUpdate(clubAdmin1._id, { managedClub: techClub._id });
-    await User.findByIdAndUpdate(clubAdmin2._id, { managedClub: culturalClub._id });
+    await User.findByIdAndUpdate(clubAdmin1._id, { managedClub: allClubs[0]._id });
+    await User.findByIdAndUpdate(clubAdmin2._id, { managedClub: allClubs[1]._id });
+
+    // Automatically derive clubsJoined for everyone
+    const allUsers = [admin, student1, student2, clubAdmin1, clubAdmin2];
+    for (const u of allUsers) {
+      const userClubs = allClubs.filter(c => c.members.some(m => m.toString() === u._id.toString())).map(c => c._id);
+      if (userClubs.length > 0) {
+        await User.findByIdAndUpdate(u._id, { $addToSet: { clubsJoined: { $each: userClubs } } });
+      }
+    }
 
     // Create events at NIT Kurukshetra locations
     const now = new Date();
@@ -156,7 +289,7 @@ const seedDB = async () => {
         time: '09:00 AM',
         location: 'Techspardha Ground',
         coordinates: { lat: 29.9495, lng: 76.8195 },
-        club: techClub._id,
+        club: allClubs[0]._id,
         tags: ['Techspardha', 'Tech Fest', 'Hackathon', 'Robotics', 'Coding'],
         category: 'fest',
         maxParticipants: 5000,
@@ -165,13 +298,13 @@ const seedDB = async () => {
         createdBy: clubAdmin1._id
       },
       {
-        title: 'HackNITKKR - 36 Hour Hackathon',
-        description: 'A 36-hour hackathon where teams build innovative solutions. Open to all NIT KKR students. Mentorship from alumni at Google, Microsoft, and Amazon. Prizes worth ₹50,000!',
+        title: 'Hackshetra - 24 Hour Hackathon',
+        description: 'A 24-hour hackathon where teams build innovative solutions. Open to all NIT KKR students. Mentorship from alumni at Google, Microsoft, and Amazon. Prizes worth ₹50,000!',
         date: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000),
         time: '10:00 AM',
         location: 'Auditorium (LHC)',
         coordinates: { lat: 29.9468, lng: 76.8175 },
-        club: techClub._id,
+        club: allClubs[0]._id,
         tags: ['Hackathon', 'Coding', 'Innovation', 'Prizes'],
         category: 'hackathon',
         maxParticipants: 200,
@@ -181,28 +314,28 @@ const seedDB = async () => {
         createdBy: clubAdmin1._id
       },
       {
-        title: 'AI/ML Workshop - Hands-on with PyTorch',
-        description: 'Hands-on workshop on building deep learning models using PyTorch. From CNNs to Transformers, build your own model from scratch. Bring your laptops!',
+        title: 'Coderun',
+        description: 'Offline Coding Contest with live leaderboard.',
         date: new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000),
         time: '02:00 PM',
         location: 'Computer Centre',
         coordinates: { lat: 29.9480, lng: 76.8190 },
-        club: techClub._id,
-        tags: ['AI', 'Machine Learning', 'PyTorch', 'Workshop', 'Deep Learning'],
-        category: 'workshop',
+        club: allClubs[0]._id,
+        tags: ['CP', 'Technobyte'],
+        category: 'contest',
         maxParticipants: 60,
         attendees: 42,
         registeredUsers: [student1._id, student2._id],
         createdBy: clubAdmin1._id
       },
       {
-        title: 'Confluence 2026 - Cultural Night',
-        description: 'NIT Kurukshetra\'s annual cultural festival! Classical dance, western dance, band performances, fashion show, and stand-up comedy. Guest artist: Prateek Kuhad (TBC).',
+        title: 'Citius',
+        description: 'NIT Kurukshetra\'s annual sports festival!',
         date: new Date(now.getTime() + 20 * 24 * 60 * 60 * 1000),
         time: '05:00 PM',
         location: 'Open Air Theatre (OAT)',
         coordinates: { lat: 29.9475, lng: 76.8195 },
-        club: culturalClub._id,
+        club: allClubs[0]._id,
         tags: ['Confluence', 'Cultural Fest', 'Dance', 'Music', 'Drama'],
         category: 'fest',
         maxParticipants: 3000,
@@ -211,13 +344,13 @@ const seedDB = async () => {
         createdBy: clubAdmin2._id
       },
       {
-        title: 'Classical Dance Night',
-        description: 'An enchanting evening of Bharatanatyam, Kathak, and contemporary fusion by the dance club. Special guest performance.',
+        title: 'DJ Night',
+        description: 'An enchanting evening.',
         date: new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000),
         time: '06:30 PM',
         location: 'Open Air Theatre (OAT)',
         coordinates: { lat: 29.9475, lng: 76.8195 },
-        club: culturalClub._id,
+        club: allClubs[1]._id,
         tags: ['Dance', 'Classical', 'Cultural', 'Performance'],
         category: 'cultural',
         maxParticipants: 500,
@@ -231,7 +364,7 @@ const seedDB = async () => {
         time: '08:00 AM',
         location: 'Cricket Ground',
         coordinates: { lat: 29.9515, lng: 76.8160 },
-        club: sportsClub._id,
+        club: allClubs[3]._id,
         tags: ['Cricket', 'Sportotsav', 'Inter-NIT', 'Tournament'],
         category: 'sports',
         maxParticipants: 300,
@@ -245,7 +378,7 @@ const seedDB = async () => {
         time: '10:00 AM',
         location: 'Central Workshop',
         coordinates: { lat: 29.9460, lng: 76.8185 },
-        club: roboticsClub._id,
+        club: allClubs[0]._id,
         tags: ['Robotics', 'RoboWars', 'Engineering', 'Competition'],
         category: 'technical',
         maxParticipants: 50,
@@ -259,7 +392,7 @@ const seedDB = async () => {
         time: '07:00 PM',
         location: 'SAC (Student Activity Centre)',
         coordinates: { lat: 29.9482, lng: 76.8168 },
-        club: literaryClub._id,
+        club: allClubs[0]._id,
         tags: ['Poetry', 'Open Mic', 'Literature', 'Creative Writing'],
         category: 'cultural',
         maxParticipants: 100,
@@ -273,7 +406,7 @@ const seedDB = async () => {
         time: '10:00 AM',
         location: 'Lecture Hall Complex (LHC)',
         coordinates: { lat: 29.9472, lng: 76.8180 },
-        club: techClub._id,
+        club: allClubs[0]._id,
         tags: ['Web Development', 'React', 'Node.js', 'MERN', 'Bootcamp'],
         category: 'workshop',
         maxParticipants: 80,
@@ -288,7 +421,7 @@ const seedDB = async () => {
         time: '11:00 AM',
         location: 'Auditorium (LHC)',
         coordinates: { lat: 29.9468, lng: 76.8175 },
-        club: ecellClub._id,
+        club: allClubs[0]._id,
         tags: ['Startup', 'Entrepreneurship', 'Pitch', 'E-Cell', 'Funding'],
         category: 'seminar',
         maxParticipants: 150,
@@ -302,31 +435,17 @@ const seedDB = async () => {
         time: '06:00 AM',
         location: 'Sports Complex',
         coordinates: { lat: 29.9510, lng: 76.8170 },
-        club: sportsClub._id,
+        club: allClubs[0]._id,
         tags: ['Yoga', 'Fitness', 'Wellness', 'Morning'],
         category: 'sports',
         maxParticipants: 80,
         attendees: 35,
         createdBy: admin._id
-      },
-      {
-        title: 'Linux Install Fest',
-        description: 'GLUG\'s signature event! Free Linux installation, troubleshooting, and a crash course on terminal, Git, and open-source contribution. Beginners welcome!',
-        date: new Date(now.getTime() + 4 * 24 * 60 * 60 * 1000),
-        time: '03:00 PM',
-        location: 'Computer Centre',
-        coordinates: { lat: 29.9480, lng: 76.8190 },
-        club: techClub._id,
-        tags: ['Linux', 'Open Source', 'Git', 'GLUG', 'Beginner Friendly'],
-        category: 'workshop',
-        maxParticipants: 100,
-        attendees: 55,
-        createdBy: clubAdmin1._id
       }
     ]);
 
     // Update clubs with event references
-    const allClubs = [techClub, culturalClub, sportsClub, roboticsClub, literaryClub, ecellClub];
+    // const allClubs = [techClub, culturalClub, sportsClub, roboticsClub, literaryClub, ecellClub];
     for (const club of allClubs) {
       const clubEvents = events.filter(e => e.club.toString() === club._id.toString());
       await Club.findByIdAndUpdate(club._id, { events: clubEvents.map(e => e._id) });

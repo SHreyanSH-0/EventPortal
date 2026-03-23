@@ -55,7 +55,7 @@ const Login = () => {
           <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🎓</div>
         </div>
         <h2>Welcome Back</h2>
-        <p className="auth-subtitle">Sign in to your NIT-KKR Connect account</p>
+        <p className="auth-subtitle">Sign in to your CampusX account</p>
 
         {error && (
           <div style={{ padding: '0.75rem', borderRadius: '10px', background: 'rgba(239,68,68,0.1)', color: 'var(--danger)', fontSize: '0.85rem', marginBottom: '1rem', textAlign: 'center' }}>

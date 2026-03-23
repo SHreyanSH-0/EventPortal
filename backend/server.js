@@ -27,7 +27,7 @@ app.use('/api/bookmarks', require('./routes/bookmarkRoutes'));
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'CampusConnect API is running' });
+  res.json({ status: 'ok', message: 'CampusX API is running' });
 });
 
 // Error handler
@@ -38,5 +38,5 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 CampusConnect API running on port ${PORT}`);
+  console.log(`🚀 CampusX API running on port ${PORT}`);
 });

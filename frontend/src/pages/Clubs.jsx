@@ -51,7 +51,7 @@ const Clubs = () => {
         </div>
         {user && (
           <Link to="/create-club">
-            <button className="btn btn-primary">🚀 Create Your Own Club</button>
+            <button className="btn btn-primary">Create Your Own Club</button>
           </Link>
         )}
       </div>

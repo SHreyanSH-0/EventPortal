@@ -1,4 +1,4 @@
-# 🎓 CampusConnect - Campus Event Discovery Portal
+# 🎓 CampusX - Campus Event Discovery Portal
 
 A full-stack web application that helps students discover and manage events happening in their college campus.
 
@@ -123,7 +123,7 @@ npm install
 Edit `backend/.env`:
 ```env
 PORT=5000
-MONGO_URI=mongodb://localhost:27017/campusconnect
+MONGO_URI=mongodb://localhost:27017/campusx
 JWT_SECRET=your_secret_key
 JWT_EXPIRE=30d
 ```

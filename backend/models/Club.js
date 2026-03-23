@@ -17,7 +17,7 @@ const clubSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['technical', 'cultural', 'sports', 'literary', 'social', 'other'],
+    enum: ['technical', 'management', 'fine arts and culture', 'Dance_Crew', 'Music_Crew', 'Drama_Crew', 'cultural', 'dramatics', 'photography', 'robotics', 'ai', 'coding', 'hackathon', 'techspardha', 'techfest', 'tech', 'contest', 'sports', 'literary', 'social', 'other'],
     required: true
   },
   events: [{
@@ -55,6 +55,11 @@ const clubSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'approved', 'rejected'],
+    default: 'pending'
   }
 }, {
   timestamps: true

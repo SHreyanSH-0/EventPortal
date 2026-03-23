@@ -10,6 +10,7 @@ const Dashboard = () => {
   const [registeredEvents, setRegisteredEvents] = useState([]);
   const [bookmarkedEvents, setBookmarkedEvents] = useState([]);
   const [recommendedEvents, setRecommendedEvents] = useState([]);
+  const [myPendingClubs, setMyPendingClubs] = useState([]);
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -19,14 +20,16 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const [profileRes, bookmarksRes, eventsRes] = await Promise.all([
+      const [profileRes, bookmarksRes, eventsRes, pendingClubsRes] = await Promise.all([
         api.get('/auth/me'),
         api.get('/bookmarks'),
-        api.get('/events?upcoming=true&sort=nearest')
+        api.get('/events?upcoming=true&sort=nearest'),
+        api.get('/clubs/my-pending')
       ]);
 
       setUserProfile(profileRes.data);
       setBookmarkedEvents(bookmarksRes.data);
+      setMyPendingClubs(pendingClubsRes.data);
 
       // Filter registered events
       const registered = eventsRes.data.filter(e =>
@@ -172,6 +175,24 @@ const Dashboard = () => {
               </div>
             )}
           </div>
+          
+          {/* Pending Club Creation Requests */}
+          {myPendingClubs.length > 0 && (
+            <div className="dash-section" style={{ marginTop: '2rem' }}>
+              <h3 className="dash-section-title">🏛️ Pending Club Applications</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {myPendingClubs.map(club => (
+                  <div key={club._id} className="map-event-item glass-sm" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', borderLeft: '4px solid var(--warning)' }}>
+                    <div className="registered-avatar">{club.name?.charAt(0)}</div>
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-primary)' }}>{club.name}</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--warning)', fontWeight: 600 }}>Awaiting Admin Approval</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

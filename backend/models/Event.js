@@ -40,7 +40,7 @@ const eventSchema = new mongoose.Schema({
   }],
   category: {
     type: String,
-    enum: ['technical', 'cultural', 'sports', 'workshop', 'seminar', 'hackathon', 'fest', 'other'],
+    enum: ['technical', 'cultural', 'sports', 'workshop', 'seminar', 'hackathon', 'fest', 'contest', 'other'],
     required: true
   },
   posterImage: {

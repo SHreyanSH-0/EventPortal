@@ -47,11 +47,8 @@ const CreateClub = () => {
       };
       const { data } = await api.post('/clubs', payload);
 
-      // Update local user state to reflect new role
-      updateUser({ role: 'clubAdmin', managedClub: data._id });
-
-      alert('🎉 Club created! You are now a Club Admin and can manage events from the Admin panel.');
-      navigate('/admin');
+      alert('📝 Club creation request sent! It is now pending super admin approval. You will receive a notification once approved.');
+      navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create club');
     } finally {

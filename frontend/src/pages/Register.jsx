@@ -87,7 +87,7 @@ const Register = () => {
         <div style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
           <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🚀</div>
         </div>
-        <h2>Join NIT-KKR Connect</h2>
+        <h2>Join CampusX</h2>
         <p className="auth-subtitle">Create your account and start exploring NIT Kurukshetra events</p>
 
         {error && (

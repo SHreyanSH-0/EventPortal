@@ -30,14 +30,14 @@ const selectedIcon = L.divIcon({
 const venueIcon = (name) => L.divIcon({
   className: 'venue-label',
   html: `<div style="
-    background: rgba(100,116,139,0.85); color: white;
-    padding: 3px 8px; border-radius: 6px;
-    font-size: 11px; font-weight: 500;
-    white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    cursor: pointer;
+    background: rgba(100,116,139,0.9); color: white;
+    padding: 4px 10px; border-radius: 6px;
+    font-size: 11px; font-weight: 600;
+    white-space: nowrap; width: max-content; box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    cursor: pointer; transform: translate(-50%, -50%); text-align: center;
   ">${name}</div>`,
-  iconSize: [0, 0],
-  iconAnchor: [50, 10]
+  iconSize: null,
+  iconAnchor: [0, 0]
 });
 
 const campusVenues = [

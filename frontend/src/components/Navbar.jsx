@@ -37,7 +37,7 @@ const Navbar = () => {
       <div className="navbar-inner">
         <Link to="/" className="navbar-logo">
           <div className="logo-icon">NK</div>
-          NIT-KKR Connect
+          CampusX
         </Link>
 
         <div className={`navbar-links ${mobileOpen ? 'open' : ''}`}>

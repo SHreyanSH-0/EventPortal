@@ -1,7 +1,7 @@
 {
-  "name": "campusconnect-backend",
+  "name": "campusx-backend",
   "version": "1.0.0",
-  "description": "CampusConnect - Campus Event Discovery Portal API",
+  "description": "CampusX - Campus Event Discovery Portal API",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

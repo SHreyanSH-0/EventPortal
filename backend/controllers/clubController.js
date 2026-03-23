@@ -20,16 +20,22 @@ const createClub = async (req, res) => {
       contactEmail: contactEmail || '',
       contactPhone: contactPhone || '',
       socialLinks: socialLinks || {},
-      members: [req.user._id]
+      members: [req.user._id],
+      status: 'pending'
     });
 
-    await User.findByIdAndUpdate(req.user._id, {
-      role: 'clubAdmin',
-      managedClub: club._id,
-      $push: { clubsJoined: club._id }
-    });
+    // Notify super admins
+    const admins = await User.find({ role: 'admin' });
+    for (let admin of admins) {
+      admin.notifications.push({
+        message: `${req.user.name} has requested to create a new club: ${club.name}`,
+        read: false,
+        createdAt: new Date()
+      });
+      await admin.save();
+    }
 
-    res.status(201).json(club);
+    res.status(201).json({ message: 'Club created and awaiting admin approval', club });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -40,7 +46,7 @@ const createClub = async (req, res) => {
 const getClubs = async (req, res) => {
   try {
     const { category, search } = req.query;
-    let query = { isActive: true };
+    let query = { isActive: true, $or: [{ status: 'approved' }, { status: { $exists: false } }] };
     if (category) query.category = category;
     if (search) {
       query.name = { $regex: search, $options: 'i' };
@@ -145,6 +151,9 @@ const leaveClub = async (req, res) => {
     if (!club) {
       return res.status(404).json({ message: 'Club not found' });
     }
+    if (club.admin.toString() === req.user._id.toString()) {
+      return res.status(400).json({ message: 'Club admin cannot leave the club' });
+    }
     club.members = club.members.filter(id => id.toString() !== req.user._id.toString());
     await club.save();
     await User.findByIdAndUpdate(req.user._id, {
@@ -176,6 +185,7 @@ const getJoinRequests = async (req, res) => {
 
     const requests = await JoinRequest.find(query)
       .populate('user', 'name email department yearOfStudy skills interests profilePicture')
+      .populate('club', 'name')
       .sort({ createdAt: -1 });
 
     res.json(requests);
@@ -341,9 +351,78 @@ const getLeaderboard = async (req, res) => {
   }
 };
 
+const getPendingClubs = async (req, res) => {
+  try {
+    const clubs = await Club.find({ status: 'pending' }).populate('admin', 'name email');
+    res.json(clubs);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const approveClub = async (req, res) => {
+  try {
+    const club = await Club.findById(req.params.id);
+    if (!club) return res.status(404).json({ message: 'Club not found' });
+    
+    club.status = 'approved';
+    await club.save();
+
+    await User.findByIdAndUpdate(club.admin, {
+      role: 'clubAdmin',
+      managedClub: club._id,
+      $addToSet: { clubsJoined: club._id },
+      $push: {
+        notifications: {
+          message: `Your request to create the club ${club.name} has been approved! 🎉`,
+          read: false,
+          createdAt: new Date()
+        }
+      }
+    });
+
+    res.json({ message: 'Club approved', club });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const rejectClub = async (req, res) => {
+  try {
+    const club = await Club.findById(req.params.id);
+    if (!club) return res.status(404).json({ message: 'Club not found' });
+    
+    club.status = 'rejected';
+    await club.save();
+
+    await User.findByIdAndUpdate(club.admin, {
+      $push: {
+        notifications: {
+          message: `Your request to create the club ${club.name} was rejected.`,
+          read: false,
+          createdAt: new Date()
+        }
+      }
+    });
+
+    res.json({ message: 'Club rejected', club });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getMyPendingClubs = async (req, res) => {
+  try {
+    const clubs = await Club.find({ admin: req.user._id, status: 'pending' });
+    res.json(clubs);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
-  createClub, getClubs, getClub, updateClub,
+  createClub, getClubs, getPendingClubs, approveClub, rejectClub, getClub, updateClub,
   joinClub, leaveClub, getLeaderboard,
   getJoinRequests, approveJoinRequest, rejectJoinRequest,
-  cancelJoinRequest, getMyJoinRequest
+  cancelJoinRequest, getMyJoinRequest, getMyPendingClubs
 };

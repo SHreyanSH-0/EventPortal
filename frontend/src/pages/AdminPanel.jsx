@@ -22,6 +22,9 @@ const AdminPanel = () => {
   const [requestsLoading, setRequestsLoading] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
 
+  // Pending Clubs state
+  const [pendingClubs, setPendingClubs] = useState([]);
+
   const [form, setForm] = useState({
     title: '', description: '', date: '', time: '', location: '',
     category: 'technical', club: '', tags: '', maxParticipants: 100,
@@ -47,32 +50,48 @@ const AdminPanel = () => {
       ]);
       setEvents(eventsRes.data);
       setClubs(clubsRes.data);
-      // Default club
-      const userClub = clubsRes.data.find(c => c.admin?._id === user._id || c.admin === user._id);
-      if (userClub) {
-        setForm(f => ({ ...f, club: userClub._id }));
-        // Fetch pending count
+      // Fetch all clubs managed by this admin
+      const adminClubs = clubsRes.data.filter(c => c.admin?._id === user._id || c.admin === user._id);
+      if (adminClubs.length > 0) {
+        setForm(f => ({ ...f, club: adminClubs[0]._id }));
+        // Fetch pending count for all clubs
         try {
-          const reqRes = await api.get(`/clubs/${userClub._id}/requests?status=pending`);
-          setPendingCount(reqRes.data.length);
+          const reqRes = await Promise.all(
+            adminClubs.map(c => api.get(`/clubs/${c._id}/requests?status=pending`))
+          );
+          setPendingCount(reqRes.reduce((acc, curr) => acc + curr.data.length, 0));
         } catch (err) { console.error(err); }
       }
     } catch (err) { console.error(err); }
     finally { setLoading(false); }
+    
+    // Fetch pending clubs if super admin
+    if (user?.role === 'admin') {
+      try {
+        const pendingRes = await api.get('/clubs/pending');
+        setPendingClubs(pendingRes.data);
+      } catch (err) { console.error(err); }
+    }
   };
 
   const fetchJoinRequests = async () => {
     setRequestsLoading(true);
     try {
-      const userClub = clubs.find(c => c.admin?._id === user._id || c.admin === user._id);
-      if (!userClub) {
+      const adminClubs = clubs.filter(c => c.admin?._id === user._id || c.admin === user._id);
+      if (adminClubs.length === 0) {
         setJoinRequests([]);
         return;
       }
-      const { data } = await api.get(`/clubs/${userClub._id}/requests?status=${requestFilter}`);
-      setJoinRequests(data);
+      const reqRes = await Promise.all(
+        adminClubs.map(c => api.get(`/clubs/${c._id}/requests?status=${requestFilter}`))
+      );
+      
+      const combined = reqRes.flatMap(res => res.data);
+      combined.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      
+      setJoinRequests(combined);
       if (requestFilter === 'pending') {
-        setPendingCount(data.length);
+        setPendingCount(combined.length);
       }
     } catch (err) { console.error(err); }
     finally { setRequestsLoading(false); }
@@ -96,6 +115,21 @@ const AdminPanel = () => {
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to reject');
     }
+  };
+
+  const handleApproveClub = async (clubId) => {
+    try {
+      await api.put(`/clubs/${clubId}/approve`);
+      fetchData();
+    } catch (err) { alert(err.response?.data?.message || 'Failed to approve club'); }
+  };
+
+  const handleRejectClub = async (clubId) => {
+    if (!window.confirm('Are you sure you want to reject this club creation request?')) return;
+    try {
+      await api.put(`/clubs/${clubId}/reject`);
+      fetchData();
+    } catch (err) { alert(err.response?.data?.message || 'Failed to reject club'); }
   };
 
   const handleSubmit = async (e) => {
@@ -192,6 +226,14 @@ const AdminPanel = () => {
             <span className="notification-badge">{pendingCount}</span>
           )}
         </button>
+        {user?.role === 'admin' && (
+          <button className={`admin-tab ${tab === 'clubApprovals' ? 'active' : ''}`} onClick={() => setTab('clubApprovals')} style={{ position: 'relative' }}>
+            🏛️ Club Approvals
+            {pendingClubs.length > 0 && (
+              <span className="notification-badge">{pendingClubs.length}</span>
+            )}
+          </button>
+        )}
       </div>
 
       {/* Create/Edit Form */}
@@ -418,7 +460,7 @@ const AdminPanel = () => {
                           {request.user?.name}
                         </div>
                         <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
-                          {request.user?.email}
+                          {request.user?.email} • <strong style={{color: 'var(--primary)'}}>Wants to join: {request.club?.name}</strong>
                         </div>
                         <div style={{ display: 'flex', gap: '1rem', marginTop: '0.4rem', flexWrap: 'wrap' }}>
                           {request.user?.department && (
@@ -456,14 +498,14 @@ const AdminPanel = () => {
                         <>
                           <button
                             className="btn btn-primary btn-sm"
-                            onClick={() => handleApprove(request.club, request._id)}
+                            onClick={() => handleApprove(request.club._id || request.club, request._id)}
                             title="Approve"
                           >
                             <FiCheck /> Approve
                           </button>
                           <button
                             className="btn btn-danger btn-sm"
-                            onClick={() => handleReject(request.club, request._id)}
+                            onClick={() => handleReject(request.club._id || request.club, request._id)}
                             title="Reject"
                           >
                             <FiX /> Reject
@@ -480,6 +522,53 @@ const AdminPanel = () => {
                 </div>
               ))}
             </div>
+          )}
+        </div>
+      )}
+
+      {/* Club Approvals */}
+      {tab === 'clubApprovals' && user?.role === 'admin' && (
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+            <h3 style={{ fontFamily: 'Space Grotesk' }}>
+              🏛️ Pending Club Approvals
+            </h3>
+          </div>
+          {pendingClubs.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-state-icon">✅</div>
+              <h3>No pending clubs</h3>
+              <p>All club creation requests have been reviewed.</p>
+            </div>
+          ) : (
+             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+               {pendingClubs.map(club => (
+                 <div className="card" style={{ padding: '1.25rem' }} key={club._id}>
+                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                     <div style={{ flex: 1 }}>
+                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.3rem' }}>
+                         <span className="tag" style={{ background: `${getCatColor(club.category)}20`, color: getCatColor(club.category), border: 'none' }}>
+                           {club.category}
+                         </span>
+                       </div>
+                       <h3 style={{ fontFamily: 'Space Grotesk', fontWeight: 700, margin: '0 0 0.5rem 0' }}>{club.name}</h3>
+                       <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', margin: '0 0 0.5rem 0' }}>{club.description}</p>
+                       <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                         Requested by: <strong>{club.admin?.name}</strong> ({club.admin?.email})
+                       </div>
+                     </div>
+                     <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button className="btn btn-primary btn-sm" onClick={() => handleApproveClub(club._id)}>
+                           <FiCheck /> Approve
+                        </button>
+                        <button className="btn btn-danger btn-sm" onClick={() => handleRejectClub(club._id)}>
+                           <FiX /> Reject
+                        </button>
+                     </div>
+                   </div>
+                 </div>
+               ))}
+             </div>
           )}
         </div>
       )}

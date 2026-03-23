@@ -15,7 +15,7 @@ const sendEmail = async ({ to, subject, html }) => {
   });
 
   await transporter.sendMail({
-    from: `"NIT-KKR Connect" <${process.env.EMAIL_FROM}>`,
+    from: `"CampusX" <${process.env.EMAIL_FROM}>`,
     to,
     subject,
     html
